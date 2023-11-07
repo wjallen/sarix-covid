@@ -1,0 +1,43 @@
+library(dplyr)
+library(lubridate)
+library(readr)
+library(covidData)
+
+required_locations <-
+  readr::read_csv(file = "./data/locations.csv") %>%
+  dplyr::select("location", "abbreviation")
+
+# The reference_date is the date of the Saturday relative to which week-ahead targets are defined.
+# The forecast_date is the Monday of forecast creation.
+# The forecast creation date is set to a Monday,
+# even if we are delayed and create it Tuesday morning.
+reference_date <- as.character(lubridate::floor_date(Sys.Date(), unit = "week") + 1)
+
+# Load data (by dropping the last observation)
+hosp_data <- covidData::load_data(
+  spatial_resolution = c("national", "state"),
+  temporal_resolution = "daily",
+  measure = "hospitalizations",
+  drop_last_date = FALSE
+  ) %>%
+  dplyr::filter(location != "60") %>%
+  dplyr::left_join(covidData::fips_codes, by = "location") %>%
+  dplyr::transmute(
+    date,
+    location,
+    location_name = ifelse(location_name == "United States", "US", location_name),
+    value = inc) %>%
+  dplyr::arrange(location, date)
+
+
+data <- hosp_data %>%
+    dplyr::filter(date >= "2020-10-01") %>%
+    dplyr::rename(hosps = value)
+
+
+location_info <- readr::read_csv('data/locations.csv')
+data <- data %>%
+    dplyr::left_join(location_info %>% dplyr::transmute(location, pop100k = population / 100000)) %>%
+    dplyr::mutate(hosp_rate = hosps / pop100k)
+
+readr::write_csv(data, paste0('data/jhu_data_cached_', reference_date, '.csv'))
