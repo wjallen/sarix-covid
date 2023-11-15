@@ -5,7 +5,8 @@ library(readr)
 base_path <- "weekly-submission/sarix-forecasts"
 forecast_date <- as.character(lubridate::floor_date(Sys.Date(), unit = "week") + 1)
 
-for (target_var in c("cases", "hosps")) {
+#for (target_var in c("cases", "hosps")) {
+target_var <- "hosps"
     target_by_loc_path <- file.path(base_path, paste0(target_var, "-by-loc"))
     models <- list.dirs(
         target_by_loc_path,
@@ -45,4 +46,4 @@ for (target_var in c("cases", "hosps")) {
             }
         }
     }
-}
+#}
