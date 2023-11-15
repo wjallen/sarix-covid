@@ -33,7 +33,7 @@ install.packages(c("dplyr", "lubridate", "readr", "ggplot2"))
 
 1.  run `make sarix` in root directory
 2.  submit forecast submission file from
-    `weekly-submission/sarix-forecasts/hosps/UMass-sarix/` to the
-    COVID-19 Forecast Hub as a PR.
+    `weekly-submission/sarix-forecasts/UMass-sarix/` to the COVID-19
+    Forecast Hub as a PR.
 3.  commit and push the generated CSV file and the PDF of plots from the
     sarix model.
