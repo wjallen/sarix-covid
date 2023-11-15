@@ -45,26 +45,12 @@ def load_data(as_of = '2022-04-18'):
   hosp_df['hosp_rate_sqrt'] = hosp_df['hosp_rate'] ** 0.5
   hosp_df['hosp_rate_fourthrt'] = hosp_df['hosp_rate'] ** 0.25
   
-  # load cases
-  #   case_df = pd.read_csv(f'data/cdc_data_smoothed_{as_of}.csv')
-  #   case_df = case_df[['location', 'date',
-  #     'corrected_case_rate', 'corrected_case_rate_taylor_0',
-  #     'corrected_case_rate_sqrt', 'corrected_case_rate_sqrt_taylor_0',
-  #     'corrected_case_rate_fourthrt', 'corrected_case_rate_fourthrt_taylor_0']]
-  
-  # merge
-  #df = hosp_df.merge(case_df, on=["location", "date"], how = "left")
   df = hosp_df
   
   # ensure correct data types
   df.date = pd.to_datetime(df.date)
-  float_vars = ['hosp_rate', 'hosp_rate_sqrt', 'hosp_rate_fourthrt']#,
-  #  'corrected_case_rate_sqrt', 'corrected_case_rate_sqrt_taylor_0',
-  #  'corrected_case_rate_fourthrt', 'corrected_case_rate_fourthrt_taylor_0']
+  float_vars = ['hosp_rate', 'hosp_rate_sqrt', 'hosp_rate_fourthrt']
   df[float_vars] = df[float_vars].astype('float64')
-  
-  # TODO: fill missing values by linear interpolation?
-  # df = df.dropna()
   
   return df
 
@@ -88,7 +74,7 @@ def construct_forecast_df(location, forecast_date, pred_qs, q_levels, base_targe
   return preds_df
 
 
-def save_forecast_files(location, forecast_date, hosp_pred_qs, case_pred_qs, q_levels, model_name):
+def save_forecast_files(location, forecast_date, hosp_pred_qs, q_levels, model_name): #(location, forecast_date, hosp_pred_qs, case_pred_qs, q_levels, model_name):
   pred_df = construct_forecast_df(location,
                                  forecast_date,
                                  hosp_pred_qs,
@@ -101,27 +87,27 @@ def save_forecast_files(location, forecast_date, hosp_pred_qs, case_pred_qs, q_l
   file_path = model_dir / f"{forecast_date}-{model_name}-{location}.csv"
   pred_df.to_csv(file_path, index = False)
   
-  if case_pred_qs is not None:
-    pred_df = construct_forecast_df(location,
-                                    forecast_date,
-                                    case_pred_qs,
-                                    q_levels,
-                                    ' day ahead inc case')
+  # if case_pred_qs is not None:
+  #   pred_df = construct_forecast_df(location,
+  #                                   forecast_date,
+  #                                   case_pred_qs,
+  #                                   q_levels,
+  #                                   ' day ahead inc case')
   
-    # save predictions
-    model_dir = Path("weekly-submission/sarix-forecasts/cases-by-loc/") / model_name
-    model_dir.mkdir(mode=0o775, parents=True, exist_ok=True)
-    file_path = model_dir / f"{forecast_date}-{model_name}-{location}.csv"
-    pred_df.to_csv(file_path, index = False)
+    # # save predictions
+    # model_dir = Path("weekly-submission/sarix-forecasts/cases-by-loc/") / model_name
+    # model_dir.mkdir(mode=0o775, parents=True, exist_ok=True)
+    # file_path = model_dir / f"{forecast_date}-{model_name}-{location}.csv"
+    # pred_df.to_csv(file_path, index = False)
 
 
-def save_fit_samples(forecast_date, param_samples, pred_samples, model_name):
-  model_dir = Path("fit_samples") / model_name
-  model_dir.mkdir(mode=0o775, parents=True, exist_ok=True)
-  file_path = model_dir / f"{forecast_date}-{model_name}.npz"
-  np.savez_compressed(file_path,
-                      param_samples = param_samples,
-                      pred_samples = pred_samples)
+# def save_fit_samples(forecast_date, param_samples, pred_samples, model_name):
+#   model_dir = Path("fit_samples") / model_name
+#   model_dir.mkdir(mode=0o775, parents=True, exist_ok=True)
+#   file_path = model_dir / f"{forecast_date}-{model_name}.npz"
+#   np.savez_compressed(file_path,
+#                       param_samples = param_samples,
+#                       pred_samples = pred_samples)
 
 
 def build_model_name(covariates, smooth_covariates, transform, p, d, P, D, pooling):
@@ -138,13 +124,13 @@ def build_model_name(covariates, smooth_covariates, transform, p, d, P, D, pooli
 def fit_sarix_variation(covariates, smooth_covariates, transform, p, d, P, D, pooling, location, forecast_date):
     if covariates == 'none':
         modeled_vars = ['hosp_rate']
-        # modeled_vars = ['hosp_rate_' + transform]
-    elif covariates == 'cases' and smooth_covariates:
-        modeled_vars = ['corrected_case_rate_taylor_0', 'hosp_rate']
-        # modeled_vars = ['corrected_case_rate_' + transform + '_taylor_0', 'hosp_rate_' + transform]
-    elif covariates == 'cases' and not smooth_covariates:
-        modeled_vars = ['corrected_case_rate', 'hosp_rate']
-        # modeled_vars = ['corrected_case_rate_' + transform, 'hosp_rate_' + transform]
+    #     # modeled_vars = ['hosp_rate_' + transform]
+    # elif covariates == 'cases' and smooth_covariates:
+    #     modeled_vars = ['corrected_case_rate_taylor_0', 'hosp_rate']
+    #     # modeled_vars = ['corrected_case_rate_' + transform + '_taylor_0', 'hosp_rate_' + transform]
+    # elif covariates == 'cases' and not smooth_covariates:
+    #     modeled_vars = ['corrected_case_rate', 'hosp_rate']
+    #     # modeled_vars = ['corrected_case_rate_' + transform, 'hosp_rate_' + transform]
     
     # load data
     data = load_data(forecast_date)
@@ -203,31 +189,31 @@ def fit_sarix_variation(covariates, smooth_covariates, transform, p, d, P, D, po
     # get back to counts scale rather than rate per 100k population
     hosp_pred_qs = hosp_pred_qs * state_pop100k
     
-    if covariates == 'none':
-        case_pred_qs = None
-    else:
-        # extract predictive quantiles for cases
-        case_pred_qs = np.percentile(pred_samples[:, :, -2], q_levels * 100.0, axis = 0)
-        
-        # subset to those we want to keep
-        case_pred_qs = case_pred_qs[:, extra_horizons_rel_obs:]
-        
-        # invert data transform
-        # if transform == "log":
-        #     case_pred_qs = np.exp(case_pred_qs)
-        # elif transform == "fourthrt":
-        #     case_pred_qs = np.maximum(0.0, case_pred_qs)**4
-        # elif transform == "sqrt":
-        #     case_pred_qs = np.maximum(0.0, case_pred_qs)**2
-        
-        # get back to counts scale rather than rate per 100k population
-        case_pred_qs = case_pred_qs * state_pop100k
+    # if covariates == 'none':
+    #     case_pred_qs = None
+    # else:
+    #     # extract predictive quantiles for cases
+    #     case_pred_qs = np.percentile(pred_samples[:, :, -2], q_levels * 100.0, axis = 0)
+    #     
+    #     # subset to those we want to keep
+    #     case_pred_qs = case_pred_qs[:, extra_horizons_rel_obs:]
+    #     
+    #     # invert data transform
+    #     # if transform == "log":
+    #     #     case_pred_qs = np.exp(case_pred_qs)
+    #     # elif transform == "fourthrt":
+    #     #     case_pred_qs = np.maximum(0.0, case_pred_qs)**4
+    #     # elif transform == "sqrt":
+    #     #     case_pred_qs = np.maximum(0.0, case_pred_qs)**2
+    #     
+    #     # get back to counts scale rather than rate per 100k population
+    #     case_pred_qs = case_pred_qs * state_pop100k
     
     model_name = build_model_name(covariates, smooth_covariates, transform, p, d, P, D, pooling)
     save_forecast_files(location=location,
                         forecast_date=forecast_date,
                         hosp_pred_qs=hosp_pred_qs,
-                        case_pred_qs=case_pred_qs,
+                        # case_pred_qs=case_pred_qs,
                         q_levels=q_levels,
                         model_name=model_name)
 
