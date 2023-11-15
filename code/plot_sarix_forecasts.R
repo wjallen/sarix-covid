@@ -2,27 +2,28 @@ library(dplyr)
 library(lubridate)
 library(readr)
 library(tidyr)
+library(ggplot2)
 
 forecast_date <- as.character(lubridate::floor_date(Sys.Date(), unit = "week") + 1)
 
-hosps_path <- "weekly-submission/sarix-forecasts/hosps"
+# hosps_path <- "weekly-submission/sarix-forecasts/hosps"
 plots_path <- file.path("weekly-submission/sarix-plots", forecast_date)
 if (!dir.exists(plots_path)) {
   dir.create(plots_path, recursive = TRUE)
 }
 
-models <- list.dirs(
-  hosps_path,
-  full.names = FALSE,
-  recursive = FALSE)
+# models <- list.dirs(
+#   hosps_path,
+#   full.names = FALSE,
+#   recursive = FALSE)
 
 
-forecast_exists <- purrr::map_lgl(
-    models,
-    function(model) {
-        file.exists(file.path(hosps_path, model, paste0(forecast_date, "-", model, ".csv")))
-    })
-models <- models[forecast_exists]
+# forecast_exists <- purrr::map_lgl(
+#     models,
+#     function(model) {
+#         file.exists(file.path(hosps_path, model, paste0(forecast_date, "-", model, ".csv")))
+#     })
+# models <- models[forecast_exists]
 
 hosps_truth <- readr::read_csv(paste0("data/jhu_data_cached_", forecast_date, ".csv"))
 location_info <- readr::read_csv("data/locations.csv")
@@ -33,7 +34,8 @@ truth <- dplyr::bind_rows(
 ) %>%
   dplyr::filter(date >= "2022-01-01")
 
-for (model in models) {
+# for (model in models) {
+model <- "UMass-sarix"
   forecasts <- readr::read_csv(
     file.path(hosps_path, model, paste0(forecast_date, "-", model, ".csv"))) %>%
     dplyr::mutate(target_var = "hosps")
@@ -80,4 +82,4 @@ for (model in models) {
     print(p)
   }
   dev.off()
-}
+# }
