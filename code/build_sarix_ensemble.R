@@ -45,12 +45,6 @@ all_components <- all_components %>%
 
 
 # build ensemble via median
-# sarix_ensemble <- hubEnsembles::build_quantile_ensemble(
-#   all_components,
-#   forecast_date = forecast_date,
-#   model_name = "sarix"
-# )
-
 sarix_ensemble <- build_quantile_ensemble(
   all_components,
   forecast_date = forecast_date,
@@ -58,7 +52,6 @@ sarix_ensemble <- build_quantile_ensemble(
 )
 
 # save ensemble in hub format
-#target_dir <- 'weekly-submission/sarix-forecasts/hosps/UMass-sarix/'
 target_dir <- 'weekly-submission/sarix-forecasts/UMass-sarix/'
 if (!dir.exists(target_dir)) {
     dir.create(target_dir, recursive = TRUE)
