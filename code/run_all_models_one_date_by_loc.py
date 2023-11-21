@@ -87,28 +87,6 @@ def save_forecast_files(location, forecast_date, hosp_pred_qs, q_levels, model_n
   file_path = model_dir / f"{forecast_date}-{model_name}-{location}.csv"
   pred_df.to_csv(file_path, index = False)
   
-  # if case_pred_qs is not None:
-  #   pred_df = construct_forecast_df(location,
-  #                                   forecast_date,
-  #                                   case_pred_qs,
-  #                                   q_levels,
-  #                                   ' day ahead inc case')
-  
-    # # save predictions
-    # model_dir = Path("weekly-submission/sarix-forecasts/cases-by-loc/") / model_name
-    # model_dir.mkdir(mode=0o775, parents=True, exist_ok=True)
-    # file_path = model_dir / f"{forecast_date}-{model_name}-{location}.csv"
-    # pred_df.to_csv(file_path, index = False)
-
-
-# def save_fit_samples(forecast_date, param_samples, pred_samples, model_name):
-#   model_dir = Path("fit_samples") / model_name
-#   model_dir.mkdir(mode=0o775, parents=True, exist_ok=True)
-#   file_path = model_dir / f"{forecast_date}-{model_name}.npz"
-#   np.savez_compressed(file_path,
-#                       param_samples = param_samples,
-#                       pred_samples = pred_samples)
-
 
 def build_model_name(covariates, smooth_covariates, transform, p, d, P, D, pooling):
   return f"SARIX_covariates_{covariates}_" + \
@@ -124,14 +102,6 @@ def build_model_name(covariates, smooth_covariates, transform, p, d, P, D, pooli
 def fit_sarix_variation(covariates, smooth_covariates, transform, p, d, P, D, pooling, location, forecast_date):
     if covariates == 'none':
         modeled_vars = ['hosp_rate']
-    #     # modeled_vars = ['hosp_rate_' + transform]
-    # elif covariates == 'cases' and smooth_covariates:
-    #     modeled_vars = ['corrected_case_rate_taylor_0', 'hosp_rate']
-    #     # modeled_vars = ['corrected_case_rate_' + transform + '_taylor_0', 'hosp_rate_' + transform]
-    # elif covariates == 'cases' and not smooth_covariates:
-    #     modeled_vars = ['corrected_case_rate', 'hosp_rate']
-    #     # modeled_vars = ['corrected_case_rate_' + transform, 'hosp_rate_' + transform]
-    
     # load data
     data = load_data(forecast_date)
     state_info = pd.read_csv('data/locations.csv')
@@ -151,11 +121,6 @@ def fit_sarix_variation(covariates, smooth_covariates, transform, p, d, P, D, po
     due_date = pd.to_datetime(forecast_date)
     extra_horizons_rel_obs = (due_date - last_obs_date).days
     effective_horizon_rel_obs = 28 + extra_horizons_rel_obs
-    
-    # xy = data[modeled_vars] \
-    #   .dropna() \
-    #   .values \
-    #   .reshape((len(data.location.unique()), len(data.date.unique()), len(modeled_vars)))
     
     sarix_fit = sarix.SARIX(
         xy = loc_data[modeled_vars].dropna().values,
@@ -178,36 +143,8 @@ def fit_sarix_variation(covariates, smooth_covariates, transform, p, d, P, D, po
     # subset to those we want to keep
     hosp_pred_qs = hosp_pred_qs[:, extra_horizons_rel_obs:]
     
-    # invert data transform
-    # if transform == "log":
-    #     hosp_pred_qs = np.exp(hosp_pred_qs)
-    # elif transform == "fourthrt":
-    #     hosp_pred_qs = np.maximum(0.0, hosp_pred_qs)**4
-    # elif transform == "sqrt":
-    #     hosp_pred_qs = np.maximum(0.0, hosp_pred_qs)**2
-    
     # get back to counts scale rather than rate per 100k population
     hosp_pred_qs = hosp_pred_qs * state_pop100k
-    
-    # if covariates == 'none':
-    #     case_pred_qs = None
-    # else:
-    #     # extract predictive quantiles for cases
-    #     case_pred_qs = np.percentile(pred_samples[:, :, -2], q_levels * 100.0, axis = 0)
-    #     
-    #     # subset to those we want to keep
-    #     case_pred_qs = case_pred_qs[:, extra_horizons_rel_obs:]
-    #     
-    #     # invert data transform
-    #     # if transform == "log":
-    #     #     case_pred_qs = np.exp(case_pred_qs)
-    #     # elif transform == "fourthrt":
-    #     #     case_pred_qs = np.maximum(0.0, case_pred_qs)**4
-    #     # elif transform == "sqrt":
-    #     #     case_pred_qs = np.maximum(0.0, case_pred_qs)**2
-    #     
-    #     # get back to counts scale rather than rate per 100k population
-    #     case_pred_qs = case_pred_qs * state_pop100k
     
     model_name = build_model_name(covariates, smooth_covariates, transform, p, d, P, D, pooling)
     save_forecast_files(location=location,
@@ -224,29 +161,18 @@ if __name__ == "__main__":
     parser.add_argument("--forecast_date", nargs="?", default='2022-04-18', type = str)
     args = parser.parse_args()
     forecast_date = args.forecast_date
-    # forecast_date = '2022-04-18'
 
     # define model variations to fit
     data = load_data(forecast_date)
     sarix_variations =  expand_grid({
         'covariates': ['none'],
-        # 'covariates': ['none', 'cases'],
-        # 'covariates': ['cases'],
-        # 'smooth_covariates': [False, True],
         'smooth_covariates': [False],
-        # 'transform': ['sqrt', 'fourthrt'],
         'transform': ['fourthrt'],
-        # 'p': [p for p in range(3)],
-        # 'p': [14, 28],
-        # 'p': [42, 56],
         'p': [14, 28, 42, 56],
         'd': [0],
         'P': [0],
-        # 'P': [P for P in range(2)],
-        # 'D': [1],
         'D': [0],
         'pooling': ['none'],
-        # 'pooling': ['none', 'shared'],
         'location': data.location.unique(),
         'forecast_date': [forecast_date]
     })
