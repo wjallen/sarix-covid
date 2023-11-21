@@ -1,6 +1,7 @@
 library(dplyr)
 library(tidyr)
 library(hubEnsembles)
+source("code/build_quantile_ensemble.R")
 
 # Set locations and quantiles
 required_quantiles <-
@@ -44,14 +45,14 @@ all_components <- all_components %>%
 
 
 # build ensemble via median
-sarix_ensemble <- hubEnsembles::build_quantile_ensemble(
+sarix_ensemble <- build_quantile_ensemble(
   all_components,
   forecast_date = forecast_date,
   model_name = "sarix"
 )
 
 # save ensemble in hub format
-target_dir <- 'weekly-submission/sarix-forecasts/hosps/UMass-sarix/'
+target_dir <- 'weekly-submission/sarix-forecasts/UMass-sarix/'
 if (!dir.exists(target_dir)) {
     dir.create(target_dir, recursive = TRUE)
 }
@@ -66,3 +67,4 @@ write.csv(sarix_ensemble %>% dplyr::transmute(
   file = paste0(target_dir, forecast_date, '-UMass-sarix.csv'),
   row.names = FALSE)
 
+unlink(hosps_path, recursive = TRUE)
