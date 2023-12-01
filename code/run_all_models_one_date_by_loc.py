@@ -173,13 +173,12 @@ if __name__ == "__main__":
     'covariates': ['none'],
     'smooth_covariates': [False],
     'transform': ['fourthrt'],
-    # 'p': [14, 28, 42, 56],
-    'p': [14, 28],
+    'p': [14, 28, 42, 56],
     'd': [0],
     'P': [0],
     'D': [0],
     'pooling': ['none'],
-    'location': data.location.unique()[:3],
+    'location': data.location.unique(),
     'forecast_date': [forecast_date]
   })
 
