@@ -3,15 +3,14 @@ library(lubridate)
 library(readr)
 library(covidData)
 
+args <- commandArgs(trailingOnly = TRUE)
+
+# The forecast_date is the date of forecast creation.
+forecast_date <- args[1]
+
 required_locations <-
   readr::read_csv(file = "./data/locations.csv") %>%
   dplyr::select("location", "abbreviation")
-
-# The reference_date is the date of the Saturday relative to which week-ahead targets are defined.
-# The forecast_date is the Monday of forecast creation.
-# The forecast creation date is set to a Monday,
-# even if we are delayed and create it Tuesday morning.
-reference_date <- as.character(lubridate::floor_date(Sys.Date(), unit = "week") + 1)
 
 # Load data (by dropping the last observation)
 hosp_data <- covidData::load_data(
@@ -40,4 +39,4 @@ data <- data %>%
     dplyr::left_join(location_info %>% dplyr::transmute(location, pop100k = population / 100000)) %>%
     dplyr::mutate(hosp_rate = hosps / pop100k)
 
-readr::write_csv(data, paste0('data/jhu_data_cached_', reference_date, '.csv'))
+readr::write_csv(data, paste0('data/jhu_data_cached_', forecast_date, '.csv'))

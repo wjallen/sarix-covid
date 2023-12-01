@@ -4,7 +4,10 @@ library(readr)
 library(tidyr)
 library(ggplot2)
 
-forecast_date <- as.character(lubridate::floor_date(Sys.Date(), unit = "week") + 1)
+args <- commandArgs(trailingOnly = TRUE)
+
+# The forecast_date is the date of forecast creation.
+forecast_date <- args[1]
 
 hosps_path <- "weekly-submission/sarix-forecasts"
 plots_path <- file.path("weekly-submission/sarix-plots", forecast_date)

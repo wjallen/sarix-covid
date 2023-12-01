@@ -3,17 +3,18 @@ library(tidyr)
 library(hubEnsembles)
 source("code/build_quantile_ensemble.R")
 
+
+args <- commandArgs(trailingOnly = TRUE)
+
+# The forecast_date is the date of forecast creation.
+forecast_date <- args[1]
+
 # Set locations and quantiles
 required_quantiles <-
   c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
 required_locations <-
   readr::read_csv(file = "./data/locations.csv") %>%
   dplyr::select("location", "abbreviation")
-# The reference_date is the date of the Saturday relative to which week-ahead targets are defined.
-# The forecast_date is the Monday of forecast creation.
-# The forecast creation date is set to a Monday,
-# even if we are delayed and create it Tuesday morning.
-forecast_date <- as.character(lubridate::floor_date(Sys.Date(), unit = "week") + 1)
 
 # load them back in to a single data.frame having columns required by
 # build_quantile_ensemble and plot_forecasts

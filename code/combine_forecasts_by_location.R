@@ -2,8 +2,13 @@ library(dplyr)
 library(lubridate)
 library(readr)
 
+
+args <- commandArgs(trailingOnly = TRUE)
+
+# The forecast_date is the date of forecast creation.
+forecast_date <- args[1]
+
 base_path <- "weekly-submission/sarix-forecasts"
-forecast_date <- as.character(lubridate::floor_date(Sys.Date(), unit = "week") + 1)
 
 target_var <- "hosps"
 target_by_loc_path <- file.path(base_path, paste0(target_var, "-by-loc"))
