@@ -160,8 +160,8 @@ if __name__ == "__main__":
   # parse arguments
   parser = argparse.ArgumentParser(description="hierarchicalGP")
   parser.add_argument("--forecast_date", nargs="?", default='2022-04-18', type = str)
-  parser.add_argument("--num_warmup", nargs="?", default=10, type = int)
-  parser.add_argument("--num_samples", nargs="?", default=10, type = int)
+  parser.add_argument("--num_warmup", nargs="?", default=1000, type = int)
+  parser.add_argument("--num_samples", nargs="?", default=1000, type = int)
   args = parser.parse_args()
   forecast_date = args.forecast_date
   num_warmup = args.num_warmup

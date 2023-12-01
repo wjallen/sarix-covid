@@ -25,7 +25,7 @@ RUN pip3 install numpy pandas scipy
 
 # https://stackoverflow.com/questions/35154219/rebuild-docker-image-from-specific-step
 ARG REBUILD_ID=unknown
-RUN pip3 install git+https://github.com/elray1/sarix.git@debug_freeze
+RUN pip3 install git+https://github.com/elray1/sarix.git
 
 WORKDIR /app
 
