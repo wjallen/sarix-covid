@@ -52,6 +52,10 @@ fi
 # todo xx post-model git operations
 #
 
+# model output(s):
+# - 'weekly-submission/sarix-forecasts/UMass-sarix/<forecast_date>-UMass-sarix.csv'
+# - plots?
+
 #
 # done
 #
