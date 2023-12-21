@@ -74,10 +74,6 @@ if [ -n "${DRY_RUN+x}" ]; then # yes DRY_RUN
   exit 0 # success
 fi
 
-# todo xx DRY_RUN guardrail
-slack_message "TODO xx: DRY_RUN *not* set, exiting"
-exit 1 # fail
-
 # create and push a branch with the new CSV file. we first sync fork w/upstream and then push to the fork b/c sometimes
 # a PR will fail to be auto-merged, which we think is caused by an out-of-sync fork
 
