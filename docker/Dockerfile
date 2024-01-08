@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.3
+FROM rocker/r-ver:4.3.2
 
 # install general OS utilities
 RUN apt-get update

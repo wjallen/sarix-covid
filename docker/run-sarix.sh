@@ -65,9 +65,9 @@ if [ "${NUM_PDF_FILES}" -ne 1 ]; then
 fi
 
 # found exactly one CSV and one PDF file
-CVS_FILE=${CSV_FILES}
+CSV_FILE=${CSV_FILES}
 PDF_FILE=${PDF_FILES}
-slack_message "found: CVS_FILE=${CVS_FILE}, PDF_FILE=${PDF_FILE}"
+slack_message "found: CSV_FILE=${CSV_FILE}, PDF_FILE=${PDF_FILE}"
 
 if [ -n "${DRY_RUN+x}" ]; then # yes DRY_RUN
   slack_message "DRY_RUN set, exiting"
@@ -93,11 +93,11 @@ git checkout master
 git merge upstream/master # update fork from original repo to keep up with their changes
 git push origin master    # sync with fork
 
-# create new branch, add the .csv file, xx
+# create new branch, add the .csv file
 slack_message "creating branch and pushing"
 TODAY_DATE=$(date +'%Y-%m-%d') # e.g., 2022-02-17
 git checkout -b ${BRANCH_NAME}
-cp "${CVS_FILE}" "${HUB_DIR}/data-processed/UMass-sarix"
+cp "${CSV_FILE}" "${HUB_DIR}/data-processed/UMass-sarix"
 git add data-processed/UMass-sarix/\*
 git commit -m "sarix build, ${TODAY_DATE}"
 git push -u origin ${BRANCH_NAME}
