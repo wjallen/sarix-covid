@@ -1,8 +1,7 @@
 FROM rocker/r-ver:4.3.2
 
 # install general OS utilities
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git
 
 # install OS binaries required by R packages - via rocker-versioned2/scripts/install_tidyverse.sh
@@ -41,12 +40,11 @@ RUN Rscript -e "remotes::install_github('reichlab/covidData')"
 RUN Rscript -e "remotes::install_github('reichlab/hubEnsembles')"
 
 # install required Python packages
-RUN apt-get install -y python3-pip
-RUN apt-get update
-RUN pip3 install numpy pandas scipy numpyro
+RUN apt-get update && apt-get install -y python3-pip
+RUN pip3 install 'numpy==1.26.2' 'pandas==1.5.3' 'scipy==1.11.3' 'numpyro==0.13.2'
 
 # install GDAL. version via https://www.reddit.com/r/django/comments/wbw9rl/comment/ii9anl6/?utm_medium=android_app&utm_source=share&context=3
-RUN apt-get install -y libgdal-dev
+RUN apt-get update && apt-get install -y libgdal-dev
 RUN pip install GDAL==3.2.2.1
 
 WORKDIR /app

@@ -109,13 +109,8 @@ if [ ${PUSH_RESULT} -ne 0 ]; then
   exit 1 # fail
 fi
 
-PR_URL=$(gh pr create --title "${TODAY_DATE} sarix" --body "sarix, COVID19 Forecast Hub")
-if [ $? -eq 0 ]; then
-  slack_message "PR OK. PR_URL=${PR_URL}"
-else
-  slack_message "PR failed"
-  exit 1 # fail
-fi
+# the "compare" url should show a "Create pull request" button:
+slack_message "push OK. branch comparison: https://github.com/reichlabmachine/covid19-forecast-hub/compare/sarix...reichlab%3Acovid19-forecast-hub%3Amaster"
 
 # upload PDF
 slack_upload "${PDF_FILE}"
