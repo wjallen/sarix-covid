@@ -110,7 +110,7 @@ if [ ${PUSH_RESULT} -ne 0 ]; then
 fi
 
 # the "compare" url should show a "Create pull request" button:
-slack_message "push OK. branch comparison: https://github.com/reichlabmachine/covid19-forecast-hub/compare/sarix...reichlab%3Acovid19-forecast-hub%3Amaster"
+slack_message "push OK. branch comparison: https://github.com/reichlab/covid19-forecast-hub/compare/master...reichlabmachine:covid19-forecast-hub:sarix"
 
 # upload PDF
 slack_upload "${PDF_FILE}"
