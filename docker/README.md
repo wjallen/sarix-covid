@@ -4,7 +4,7 @@ This directory contains files to support a containerized Docker version of the C
 
 The app uses the helper scripts in https://github.com/reichlab/container-utils/, which require the following environment variables: `SLACK_API_TOKEN`, `CHANNEL_ID`; `GH_TOKEN`; `GIT_USER_NAME`, `GIT_USER_EMAIL`; `GIT_CREDENTIALS`. Please that repo for details. Note that it's easiest and safest to save these in a `*.env` file and then pass that file to `docker run`.
 
-This app supports a `DRY_RUN` environment variable.
+This app supports a `DRY_RUN` environment variable. Set it if you want to run the model but disable git operations.
 
 # `/data` dir
 
