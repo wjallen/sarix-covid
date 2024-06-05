@@ -41,7 +41,15 @@
                 "inputMode": "OPTIONAL",
                 "autoMountLocal": true,
                 "sourceUrl": null,
-                "targetPath": "*"
+                "targetPath": "data"
+            },
+            {
+                "name": "Weekly submission folder",
+                "description": "Mount this folder to capture run data",
+                "inputMode": "OPTIONAL",
+                "autoMountLocal": true,
+                "sourceUrl": null,
+                "targetPath": "weekly-submission"
             }
         ],
         "fileInputArrays": [],
@@ -56,7 +64,19 @@
                     }
                 }
             ],
-            "containerArgs": [],
+            "containerArgs": [
+
+                {
+                    "name": "Data Mount",
+                    "description": "Mount required for input and output data",
+                    "inputMode": "FIXED",
+                    "arg": " --bind ./data:/app/data,./weekly-submission:/app/weekly-submission",
+                    "notes": {
+                        "isHidden": true
+                    }
+                }
+
+            ],
             "schedulerOptions": [
                 {
                     "name": "brainmap-default",
