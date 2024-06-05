@@ -42,6 +42,20 @@ if [ ${MAKE_RESULT} -ne 0 ]; then
   exit 1 # fail
 fi
 
+# local run only if LOCAL_RUN is set
+
+CSV_FILES=$(find "/app/weekly-submission" -type f -name "*.csv")
+PDF_FILES=$(find "/app/weekly-submission" -type f -name "*.pdf")
+
+if [ -n "${LOCAL_RUN+x}" ]; then # yes DRY_RUN
+    mv ${CSV_FILES} /data
+    mv ${PDF_FILES} /data
+    mv /tmp/run-sarix-out.txt /data
+    echo "local run only, exiting"
+    exit 0 
+fi
+
+
 # make had no errors. find PDF and CSV files, add new CSV file to new branch, and then upload the PDF.
 # example output files (under /app):
 #   ./weekly-submission/sarix-forecasts/UMass-sarix/2023-12-19-UMass-sarix.csv
