@@ -1,0 +1,97 @@
+{
+    "id": "wallen-sarix-covid",
+    "version": "1.0",
+    "description": "Seasonal Auto-Regressive Integrated models with eXogenous predictors for forecasting Covid-19 hospitalizations",
+    "owner": "${apiUserId}",
+    "enabled": true,
+    "runtime": "SINGULARITY",
+    "runtimeVersion": null,
+    "runtimeOptions": [
+        "SINGULARITY_RUN"
+    ],
+    "containerImage": "docker://wjallen/sarix-covid:1.0",
+    "jobType": "BATCH",
+    "maxJobs": -1,
+    "maxJobsPerUser": -1,
+    "strictFileInputs": false,
+    "jobAttributes": {
+        "description": "Run sarix-covid model",
+        "dynamicExecSystem": false,
+        "execSystemConstraints": null,
+        "execSystemId": "tacc.lonestar6.wallen",
+        "execSystemExecDir": "${JobWorkingDir}",
+        "execSystemInputDir": "${JobWorkingDir}",
+        "execSystemOutputDir": "${JobWorkingDir}",
+        "execSystemLogicalQueue": "development",
+        "archiveSystemId": "tacc.lonestar6.wallen",
+        "archiveSystemDir": "HOST_EVAL($STOCKYARD)/tapis/archive/${JobCreateDate}/${JobName}-${JobUUID}",
+        "archiveOnAppError": true,
+        "isMpi": false,
+        "mpiCmd": null,
+        "cmdPrefix": "",
+        "nodeCount": 1,
+        "coresPerNode": 1,
+        "memoryMB": 100,
+        "maxMinutes": 120,
+        "subscriptions": [],
+        "tags": [],
+        "fileInputs": [
+            {
+                "name": "Input data",
+                "description": "A sample form for collecting input data",
+                "inputMode": "REQUIRED",
+                "autoMountLocal": true,
+                "sourceUrl": null,
+                "targetPath": "*"
+            }
+        ],
+        "fileInputArrays": [],
+        "parameterSet": {
+            "appArgs": [
+                {
+                    "name": "Default run command",
+                    "description": "Default run command",
+                    "arg": "/bin/bash /app/run.sh",
+                    "notes": { 
+                        "isHidden": true
+                    }
+                }
+            ],
+            "containerArgs": [],
+            "schedulerOptions": [
+                {
+                    "name": "brainmap-default",
+                    "description": "Default Scheduler Profile for BrainMap Apps",
+                    "inputMode": "FIXED",
+                    "arg": "--tapis-profile brainmap-default",
+                    "notes": {
+                        "isHidden": true
+                    }
+                }
+            ],
+            "envVariables": [],
+            "archiveFilter": {
+                "includes": [],
+                "excludes": [],
+                "includeLaunchFiles": true
+            }
+        }
+    },
+    "tags": [
+        "portalName: CEP",
+        "portalName: UTRC"
+    ],
+    "notes": {
+        "label": "sarix-covid",
+        "helpUrl": "https://github.com/wjallen/sarix-covid/",
+        "hideNodeCountAndCoresPerNode": true,
+        "isInteractive": false,
+        "icon": null,
+        "category": "Analysis",
+        "queueFilter": [
+            "development",
+            "normal",
+            "vm-small"
+        ]
+    }
+}

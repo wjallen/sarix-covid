@@ -48,9 +48,10 @@ CSV_FILES=$(find "/app/weekly-submission" -type f -name "*.csv")
 PDF_FILES=$(find "/app/weekly-submission" -type f -name "*.pdf")
 
 if [ -n "${LOCAL_RUN+x}" ]; then # yes DRY_RUN
-    mv ${CSV_FILES} /data
-    mv ${PDF_FILES} /data
-    mv /tmp/run-sarix-out.txt /data
+    mkdir -p /app/data/output
+    mv ${CSV_FILES} /app/data/output
+    mv ${PDF_FILES} /app/data/output
+    mv /tmp/run-sarix-out.txt /app/data/output
     echo "local run only, exiting"
     exit 0 
 fi

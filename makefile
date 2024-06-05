@@ -22,8 +22,8 @@ build:
 	docker build -t sarix-covid:1.0 -f docker/Dockerfile .
 
 run:
-	docker run --rm -v $(PWD)/data:/app/data --env-file $(PWD)/.env sarix-covid:1.0
+	docker run --rm -v $(PWD)/data:/app/data -u $(id -u):$(id -g) --env-file $(PWD)/.env sarix-covid:1.0
 
 test:
-	docker run --rm -v $(PWD)/data:/app/data --env-file $(PWD)/.env -it sarix-covid:1.0 /bin/bash
+	docker run --rm -v $(PWD)/data:/app/data -u $(id -u):$(id -g) --env-file $(PWD)/.env -it sarix-covid:1.0 /bin/bash
 
