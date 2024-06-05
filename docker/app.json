@@ -28,7 +28,6 @@
         "archiveOnAppError": true,
         "isMpi": false,
         "mpiCmd": null,
-        "cmdPrefix": "",
         "nodeCount": 1,
         "coresPerNode": 1,
         "memoryMB": 100,
@@ -39,7 +38,7 @@
             {
                 "name": "Input data",
                 "description": "A sample form for collecting input data",
-                "inputMode": "REQUIRED",
+                "inputMode": "OPTIONAL",
                 "autoMountLocal": true,
                 "sourceUrl": null,
                 "targetPath": "*"
@@ -51,7 +50,7 @@
                 {
                     "name": "Default run command",
                     "description": "Default run command",
-                    "arg": "/bin/bash /app/run.sh",
+                    "arg": "/bin/bash /app/run-sarix.sh",
                     "notes": { 
                         "isHidden": true
                     }
@@ -69,7 +68,56 @@
                     }
                 }
             ],
-            "envVariables": [],
+            "envVariables": [
+                 {
+                   "key": "SLACK_API_TOKEN",
+                   "value": "",
+                   "description": "Slack API Token",
+                   "inputMode": "INCLUDE_BY_DEFAULT"
+                 },
+                 {
+                   "key": "CHANNEL_ID",
+                   "value": "",
+                   "description": "Slack channel ID",
+                   "inputMode": "INCLUDE_BY_DEFAULT"
+                 },
+                 {
+                   "key": "GH_TOKEN",
+                   "value": "",
+                   "description": "GitHub Token",
+                   "inputMode": "INCLUDE_BY_DEFAULT"
+                 },
+                 {
+                   "key": "GIT_USER_NAME",
+                   "value": "",
+                   "description": "GitHub username",
+                   "inputMode": "INCLUDE_BY_DEFAULT"
+                 },
+                 {
+                   "key": "GIT_USER_EMAIL",
+                   "value": "",
+                   "description": "GitHub email",
+                   "inputMode": "INCLUDE_BY_DEFAULT"
+                 },
+                 {
+                   "key": "GIT_CREDENTIALS",
+                   "value": "",
+                   "description": "GitHub credentials",
+                   "inputMode": "INCLUDE_BY_DEFAULT"
+                 },
+                 {
+                   "key": "DRY_RUN",
+                   "value": "yes",
+                   "description": "If set, perform dry run",
+                   "inputMode": "INCLUDE_BY_DEFAULT"
+                 },
+                 {
+                   "key": "LOCAL_RUN",
+                   "value": "yes",
+                   "description": "If set, perform local run",
+                   "inputMode": "INCLUDE_BY_DEFAULT"
+                 }
+            ],
             "archiveFilter": {
                 "includes": [],
                 "excludes": [],
